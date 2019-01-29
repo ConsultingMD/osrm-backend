@@ -280,9 +280,8 @@ matrix:
       after_success:
         - ./scripts/travis/publish.sh
 
-  allow_failures:
-    - stage: optional
-      os: osx
+    - os: osx
+      stage: optional
       osx_image: xcode9.2
       compiler: "mason-osx-release-node-lts"
       # we use the xcode provides clang and don't install our own
@@ -290,8 +289,7 @@ matrix:
       after_success:
         - ./scripts/travis/publish.sh
 
-    - stage: optional
-      os: linux
+    - os: linux
       sudo: false
       compiler: "node-lts-mason-linux-release"
       addons:
@@ -315,8 +313,7 @@ matrix:
       after_success:
         - ./scripts/travis/publish.sh
 
-    - stage: optional
-      os: linux
+    - os: linux
       sudo: false
       compiler: "node-lts-mason-linux-debug"
       addons:
@@ -339,6 +336,14 @@ matrix:
         - npm run nodejs-tests
       after_success:
         - ./scripts/travis/publish.sh
+
+  allow_failures:
+    - compiler: "mason-osx-release-node-lts"
+      env: ENABLE_MASON=ON BUILD_TYPE='Release' CUCUMBER_TIMEOUT=60000 CCOMPILER='clang' CXXCOMPILER='clang++' ENABLE_ASSERTIONS=ON ENABLE_LTO=ON NODE="lts"
+    - compiler: "node-lts-mason-linux-release"
+      env: CLANG_VERSION='5.0.0' BUILD_TYPE='Release' ENABLE_MASON=ON ENABLE_LTO=ON JOBS=3 NODE="lts"
+    - compiler: "node-lts-mason-linux-debug"
+      env: CLANG_VERSION='5.0.0' BUILD_TYPE='Debug' ENABLE_MASON=ON ENABLE_LTO=ON JOBS=3 NODE="lts"
 
 before_install:
   - source $NVM_DIR/nvm.sh
